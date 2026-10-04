@@ -52,8 +52,9 @@ Die HTTP-Entwicklungskonfiguration der API verwendet standardmaessig
 | `GET` | `/weatherforecast` | Liefert fuenf zufaellige Beispiel-Wettervorhersagen |
 
 OpenAPI wird nur in der Entwicklungsumgebung registriert. Es gibt derzeit
-keine fachlichen Endpunkte, Datenbank, Authentifizierung, Autorisierung oder
-persistente Konfiguration.
+keine fachlichen Endpunkte, implementierte Datenbankanbindung,
+Authentifizierung, Autorisierung oder persistente Konfiguration. PostgreSQL ist
+als Datenbank festgelegt; das Datenmodell und die Anbindung stehen noch aus.
 
 ## Wichtige Dateien
 
@@ -88,6 +89,9 @@ Es sind aktuell keine automatisierten Tests im Repository vorhanden.
   Startcode; sie sind keine Produktanforderungen.
 - Neue Frontend-zu-Backend-Kommunikation braucht eine bewusste Entscheidung
   fuer Basis-URL, CORS und Entwicklungs-Proxy.
+- PostgreSQL ist die festgelegte Datenbank. Bei der ersten persistierenden
+  Fachfunktion sollten Entity Framework Core, der PostgreSQL-Provider und
+  versionierte Migrationen eingerichtet werden.
 - Die API verwendet bereits Controller (`AddControllers` und
   `MapControllers`); neue HTTP-Endpunkte sollten diesem Muster folgen, sofern
   keine Architekturentscheidung es aendert.
@@ -103,7 +107,9 @@ werden:
 > Frontend liegt in `Frontend` und verwendet React 19, TypeScript und Vite 7.
 > Das Backend liegt in `Backend/ServePOS.API` und ist eine ASP.NET-Core-.NET-10
 > Web API mit Controllern. Es existiert nur der Beispielendpunkt
-> `GET /weatherforecast`; es gibt keine Datenbank, Authentifizierung,
-> fachlichen Modelle, API-Anbindung im Frontend oder automatisierten Tests.
+> `GET /weatherforecast`; es gibt noch keine Datenbankanbindung,
+> Authentifizierung, fachlichen Modelle, API-Anbindung im Frontend oder
+> automatisierten Tests.
 > Beruecksichtige bei neuen Features die getrennten Anwendungen sowie die
-> noch fehlende CORS-/Proxy-Konfiguration.
+> noch fehlende CORS-/Proxy-Konfiguration. PostgreSQL ist als Datenbank
+> entschieden, aber noch nicht in die Anwendung integriert.
