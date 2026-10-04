@@ -19,10 +19,17 @@ public class OrderItem : EntityId
 
     public string? SpecialInstructions { get; private set; }
     public decimal? UnitPrice { get; private set; }
+    public bool IsServed { get; private set; }
 
     public void SetUnitPrice(decimal unitPrice)
     {
         UnitPrice = unitPrice;
+        UpdateTimestamp();
+    }
+
+    public void MarkServed()
+    {
+        IsServed = true;
         UpdateTimestamp();
     }
 }

@@ -10,6 +10,8 @@ namespace ServePos.Infrastructure
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<CashPayment> CashPayments { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<TicketItem> TicketItems { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -53,6 +55,24 @@ namespace ServePos.Infrastructure
                 .HasOne(x => x.ReceivedBy)
                 .WithMany()
                 .HasForeignKey(x => x.ReceivedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Ticket>()
+                .HasMany(x => x.Items)
+                .WithOne(x => x.Ticket)
+                .HasForeignKey(x => x.TicketId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Ticket>()
+                .HasOne(x => x.Order)
+                .WithMany()
+                .HasForeignKey(x => x.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TicketItem>()
+                .HasOne(x => x.OrderItem)
+                .WithMany()
+                .HasForeignKey(x => x.OrderItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Order>()

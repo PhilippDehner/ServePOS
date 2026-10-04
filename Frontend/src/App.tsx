@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Serve from "./pages/Serve";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import Tickets from "./pages/Tickets";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/serve" element={<Serve />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/tickets" element={<Tickets />} />
       </Route>
     </Routes>
   );

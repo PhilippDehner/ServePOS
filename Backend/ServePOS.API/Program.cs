@@ -8,6 +8,7 @@ using ServePos.Infrastructure;
 using ServePos.Infrastructure.Repositories;
 using ServePos.Shared;
 using ServePOS.API.Auth;
+using ServePOS.API.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,6 +63,7 @@ builder.Services.AddScoped<StaffService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<Bootstrapper>();
 builder.Services.AddScoped<ActiveEventGuard>();
+builder.Services.AddScoped<ITicketPrinter, LoggingTicketPrinter>();
 
 builder.Services.AddDbContext<PosDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), 

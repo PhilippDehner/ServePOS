@@ -75,6 +75,23 @@ public class OrderRepository(PosDbContext db) : Repository(db), IOrderRepository
         }
 
         order.MarkPaid(payment);
+        var kitchenItems = order.Items
+            .Where(x => x.MenuItem.Type is ServePos.Shared.MenuItemType.Food or ServePos.Shared.MenuItemType.Dessert)
+            .Select(x => x.Id);
+        foreach (var itemId in kitchenItems)
+        {
+            Context.Tickets.Add(new Ticket(order.Id, TicketStation.Kitchen, [itemId]));
+        }
+
+        var drinkItems = order.Items
+            .Where(x => x.MenuItem.Type is ServePos.Shared.MenuItemType.Drink or ServePos.Shared.MenuItemType.Special)
+            .Select(x => x.Id)
+            .ToList();
+        if (drinkItems.Count > 0)
+        {
+            Context.Tickets.Add(new Ticket(order.Id, TicketStation.Drinks, drinkItems));
+        }
+
         await Context.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
