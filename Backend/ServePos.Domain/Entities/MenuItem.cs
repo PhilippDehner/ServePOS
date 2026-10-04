@@ -1,0 +1,45 @@
+﻿using ServePos.Domain.Base;
+using ServePos.Shared;
+
+namespace ServePos.Domain.Entities;
+
+public class MenuItem : EntityId
+{
+    private MenuItem() { }
+
+    public MenuItem(string name, string? shortName, MenuItemType type, decimal price, short? availableQuantity, int sortIndex)
+    {
+        Name = name;
+        ShortName = shortName;
+        Type = type;
+        Price = price;
+        AvailableQuantity = availableQuantity;
+        SortIndex = sortIndex;
+        IsActive = true;
+    }
+
+    public string Name { get; private set; } = "";
+    public string? ShortName { get; private set; }
+    public MenuItemType Type { get; private set; }
+    public decimal Price { get; private set; }
+    public bool IsActive { get; private set; }
+    public int? AvailableQuantity { get; private set; }
+    public int SortIndex { get; private set; }
+
+    public void Update(string name, string? shortName, MenuItemType type, decimal price, bool isActive, int? availableQuantity)
+    {
+        Name = name;
+        ShortName = shortName;
+        Type = type;
+        Price = price;
+        AvailableQuantity = availableQuantity;
+        IsActive = isActive;
+
+        UpdateTimestamp();
+    }
+
+    public void SetSortIndex(int index)
+    {
+        SortIndex = index;
+    }
+}
