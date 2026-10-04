@@ -152,7 +152,9 @@ BootstrapAdmin__Pin=<at-least-4-digits>
 
 1. Lege im Repository eine `.env`-Datei an und setze mindestens
    `Jwt__SigningKey` auf einen zufälligen Wert mit mindestens 32 Zeichen sowie
-   `BootstrapAdmin__Username` und `BootstrapAdmin__Pin`.
+   `BootstrapAdmin__Username` und `BootstrapAdmin__Pin`. Docker Compose leitet
+   diese Werte als Konfiguration an die API weiter. `Jwt__Issuer` und
+   `Jwt__Audience` sind optional und verwenden standardmäßig `ServePOS`.
 2. Starte den vollständigen Stack:
 
    ```bash

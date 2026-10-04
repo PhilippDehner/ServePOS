@@ -11,10 +11,6 @@ namespace ServePos.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:menu_item_type", "drink,food,dessert,special")
-                .OldAnnotation("Npgsql:Enum:menu_item_type", "drink,food,special");
-
             migrationBuilder.AddColumn<Guid>(
                 name: "ClientOrderId",
                 table: "Orders",
@@ -47,10 +43,6 @@ namespace ServePos.Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "ClientOrderId",
                 table: "Orders");
-
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:menu_item_type", "drink,food,special")
-                .OldAnnotation("Npgsql:Enum:menu_item_type", "drink,food,dessert,special");
 
             migrationBuilder.AlterColumn<string>(
                 name: "ShortName",

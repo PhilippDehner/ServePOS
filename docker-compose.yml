@@ -22,6 +22,12 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
+      Jwt__Issuer: ${Jwt__Issuer:-ServePOS}
+      Jwt__Audience: ${Jwt__Audience:-ServePOS}
+      Jwt__SigningKey: ${Jwt__SigningKey:?Set Jwt__SigningKey in .env to a random value with at least 32 characters}
+      Jwt__ExpirationMinutes: ${Jwt__ExpirationMinutes:-60}
+      BootstrapAdmin__Username: ${BootstrapAdmin__Username:?Set BootstrapAdmin__Username in .env}
+      BootstrapAdmin__Pin: ${BootstrapAdmin__Pin:?Set BootstrapAdmin__Pin in .env}
       ConnectionStrings__DefaultConnection: Host=database;Port=5432;Database=posdb;Username=pos;Password=pos
     depends_on:
       database:
