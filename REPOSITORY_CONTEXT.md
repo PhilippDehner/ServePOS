@@ -4,6 +4,9 @@ Dieses Dokument ist der schnelle Einstieg für neue Chats und Mitwirkende. Es
 beschreibt den **tatsächlich vorhandenen** Stand des Repositories, nicht die
 geplante Produktfunktionalitaet.
 
+Die verbindliche fachliche Definition von ServePOS steht in
+[README.md](README.md). Bei Widerspruechen hat diese Fachdefinition Vorrang.
+
 ## Projektzweck
 
 ServePOS soll eine Anwendung zum Servieren von Getraenken und Speisen werden.
