@@ -11,6 +11,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ServePos.Application\ServePos.Application.csproj" />
+    <ProjectReference Include="..\ServePos.Infrastructure\ServePos.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

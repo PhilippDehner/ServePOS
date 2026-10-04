@@ -18,9 +18,9 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    // "erasableSyntaxOnly": true, -> api client must be ignored, then this can be enabled
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
