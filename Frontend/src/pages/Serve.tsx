@@ -13,6 +13,7 @@ import { BiSolidDrink } from "react-icons/bi";
 import { BsForkKnife } from "react-icons/bs";
 import { LiaCommentDotsSolid } from "react-icons/lia";
 import { CgCoffee } from "react-icons/cg";
+import { getAuthorizationHeaders } from "../auth";
 import {
     createClientOrderId,
     getPendingOrderCount,
@@ -21,7 +22,8 @@ import {
 } from "../offlineOrders";
 
 const config = new Configuration({
-    basePath: import.meta.env.VITE_API_BASE_URL || "/api"
+    basePath: import.meta.env.VITE_API_BASE_URL || "/api",
+    headers: getAuthorizationHeaders(),
 });
 const api = new MenuApi(config);
 const staffApi = new StaffApi(config);

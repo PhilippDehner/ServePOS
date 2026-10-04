@@ -134,3 +134,16 @@ PostgreSQL ist als Datenbank festgelegt, aber noch nicht integriert.
 Weitere Informationen zum aktuellen Codebestand, lokalen Start und den
 vorhandenen Beispielendpunkten stehen in
 [REPOSITORY_CONTEXT.md](REPOSITORY_CONTEXT.md).
+
+## Authentication configuration
+
+Before starting the API for the first time, configure these environment variables.
+The bootstrap credentials are consumed only while no user exists:
+
+```text
+Jwt__Issuer=ServePOS
+Jwt__Audience=ServePOS
+Jwt__SigningKey=<at-least-32-random-characters>
+BootstrapAdmin__Username=admin
+BootstrapAdmin__Pin=<at-least-4-digits>
+```
