@@ -21,8 +21,15 @@ public class Order : EntityId
 
     public int EnteredById { get; private set; }
     public Staff EnteredBy { get; private set; } = null!;
+    public int? EventId { get; private set; }
+    public Event? Event { get; private set; }
 
     public List<OrderItem> Items { get; private set; } = [];
+
+    public void AssignEvent(int eventId)
+    {
+        EventId = eventId;
+    }
 
     public void MarkPaid(CashPayment cashPayment)
     {

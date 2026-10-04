@@ -58,4 +58,15 @@ public class MenuItem : EntityId
         AvailableQuantity--;
         UpdateTimestamp();
     }
+
+    public void IncreaseAvailableQuantity()
+    {
+        if (AvailableQuantity is null)
+        {
+            return;
+        }
+
+        AvailableQuantity++;
+        UpdateTimestamp();
+    }
 }

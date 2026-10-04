@@ -12,6 +12,8 @@ namespace ServePos.Infrastructure
         public DbSet<CashPayment> CashPayments { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketItem> TicketItems { get; set; }
+        public DbSet<OrderCancellation> OrderCancellations { get; set; }
+        public DbSet<AuditEvent> AuditEvents { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -46,6 +48,12 @@ namespace ServePos.Infrastructure
                 .HasForeignKey(x => x.EnteredById);
 
             modelBuilder.Entity<Order>()
+                .HasOne(x => x.Event)
+                .WithMany()
+                .HasForeignKey(x => x.EventId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Order>()
                 .HasOne(x => x.CashPayment)
                 .WithOne(x => x.Order)
                 .HasForeignKey<CashPayment>(x => x.OrderId)
@@ -73,6 +81,24 @@ namespace ServePos.Infrastructure
                 .HasOne(x => x.OrderItem)
                 .WithMany()
                 .HasForeignKey(x => x.OrderItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<OrderCancellation>()
+                .HasOne(x => x.OrderItem)
+                .WithMany()
+                .HasForeignKey(x => x.OrderItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<OrderCancellation>()
+                .HasOne(x => x.PerformedBy)
+                .WithMany()
+                .HasForeignKey(x => x.PerformedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<AuditEvent>()
+                .HasOne(x => x.Staff)
+                .WithMany()
+                .HasForeignKey(x => x.StaffId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Order>()

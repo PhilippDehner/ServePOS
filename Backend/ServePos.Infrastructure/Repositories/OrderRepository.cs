@@ -23,6 +23,16 @@ public class OrderRepository(PosDbContext db) : Repository(db), IOrderRepository
 
     public async Task<bool> AddIfAbsentAsync(Order order, CancellationToken cancellationToken)
     {
+        var activeEventId = await Context.Events
+            .Where(x => x.IsActive && !x.IsCompleted)
+            .Select(x => (int?)x.Id)
+            .SingleOrDefaultAsync(cancellationToken);
+        if (activeEventId is null)
+        {
+            throw new InvalidOperationException("No active event is available.");
+        }
+
+        order.AssignEvent(activeEventId.Value);
         Context.Orders.Add(order);
 
         try
