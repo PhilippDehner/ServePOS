@@ -163,7 +163,9 @@ BootstrapAdmin__Pin=<at-least-4-digits>
    die API läuft auf `http://localhost:8080`. Der erste konfigurierte
    Administrator wird beim Start angelegt.
 3. Beende den Stack mit `docker compose down`. Mit `-v` werden zusätzlich die
-   lokalen Datenbankvolumes entfernt.
+   lokalen Datenbankvolumes entfernt. PostgreSQL 18 speichert Daten im
+   `database_data`-Volume unterhalb von `/var/lib/postgresql`; ein Upgrade von
+   älteren PostgreSQL-Major-Versionen erfordert deshalb eine Datenmigration.
 
 ## Lokale Entwicklung
 
