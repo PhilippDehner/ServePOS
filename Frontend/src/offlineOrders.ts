@@ -9,6 +9,11 @@ export type PendingOrder = {
     queuedAt: string;
 };
 
+export type OrderReceipt = {
+    orderId: number;
+    isPaid: boolean;
+};
+
 const databaseName = "servepos";
 const storeName = "pending-orders";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "/api";
@@ -56,7 +61,7 @@ export async function queueOrder(order: PendingOrder): Promise<void> {
     await withStore("readwrite", store => store.put(order));
 }
 
-async function sendOrder(order: PendingOrder): Promise<void> {
+async function sendOrder(order: PendingOrder): Promise<OrderReceipt> {
     const response = await fetch(`${apiBaseUrl}/serve/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -66,21 +71,40 @@ async function sendOrder(order: PendingOrder): Promise<void> {
     if (!response.ok) {
         throw new Error(`Bestellung konnte nicht übertragen werden (${response.status}).`);
     }
+
+    return response.json() as Promise<OrderReceipt>;
 }
 
-export async function submitOrder(order: PendingOrder): Promise<"submitted" | "queued"> {
+export async function submitOrder(order: PendingOrder): Promise<OrderReceipt | "queued"> {
     if (!navigator.onLine) {
         await queueOrder(order);
         return "queued";
     }
 
     try {
-        await sendOrder(order);
-        return "submitted";
+        return await sendOrder(order);
     } catch {
         await queueOrder(order);
         return "queued";
     }
+
+}
+
+export async function payCash(orderId: number, receivedAmount: number, staffId: number): Promise<{
+    totalAmount: number;
+    changeAmount: number;
+}> {
+    const response = await fetch(`${apiBaseUrl}/serve/order/${orderId}/cash-payment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ receivedAmount, staffId }),
+    });
+
+    if (!response.ok) {
+        throw new Error((await response.text()) || "Barzahlung konnte nicht abgeschlossen werden.");
+    }
+
+    return response.json() as Promise<{ totalAmount: number; changeAmount: number }>;
 }
 
 export async function syncPendingOrders(): Promise<number> {

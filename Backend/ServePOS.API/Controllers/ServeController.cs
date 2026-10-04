@@ -14,14 +14,34 @@ public class ServeController(OrderService _service, ActiveEventGuard activeEvent
 {
     [HttpPost]
     [Route("order")]
-    public async Task<IActionResult> Order(OrderInformation order, CancellationToken cancellationToken)
+    public async Task<ActionResult<OrderReceipt>> Order(OrderInformation order, CancellationToken cancellationToken)
     { 
         if (!await activeEventGuard.HasActiveEvent(cancellationToken))
         {
             return Conflict("No active event is available.");
         }
 
-        await _service.Order(order, cancellationToken);
-        return Ok();
+        return Ok(await _service.Order(order, cancellationToken));
+    }
+
+    [HttpPost("order/{orderId:int}/cash-payment")]
+    public async Task<ActionResult<CashPaymentResult>> PayCash(
+        int orderId,
+        CashPaymentInformation payment,
+        CancellationToken cancellationToken)
+    {
+        if (!await activeEventGuard.HasActiveEvent(cancellationToken))
+        {
+            return Conflict("No active event is available.");
+        }
+
+        try
+        {
+            return Ok(await _service.PayCash(orderId, payment, cancellationToken));
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(exception.Message);
+        }
     }
 }

@@ -18,4 +18,11 @@ public class OrderItem : EntityId
     public MenuItem MenuItem { get; private set; } = null!;
 
     public string? SpecialInstructions { get; private set; }
+    public decimal? UnitPrice { get; private set; }
+
+    public void SetUnitPrice(decimal unitPrice)
+    {
+        UnitPrice = unitPrice;
+        UpdateTimestamp();
+    }
 }

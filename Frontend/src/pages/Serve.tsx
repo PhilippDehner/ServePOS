@@ -19,6 +19,7 @@ import {
     getPendingOrderCount,
     submitOrder,
     syncPendingOrders,
+    payCash,
 } from "../offlineOrders";
 
 const config = new Configuration({
@@ -41,6 +42,7 @@ export default function Order() {
     const [pendingOrderCount, setPendingOrderCount] = useState(0);
     const [submitting, setSubmitting] = useState(false);
     const [orderStatus, setOrderStatus] = useState<string | null>(null);
+    const [cashAmount, setCashAmount] = useState("");
 
     useEffect(() => {
         loadMenuItems();
@@ -287,15 +289,48 @@ export default function Order() {
                 queuedAt: new Date().toISOString(),
             });
 
+            if (result !== "queued") {
+                setOrderStatus(`Bestellung ${result.orderId} wurde erfasst. Bitte den gegebenen Betrag eingeben und kassieren.`);
+                return;
+            }
+
             setOrderLines([]);
             setNextLineId(1);
             setPendingOrderCount(await getPendingOrderCount());
-            setOrderStatus(result === "submitted"
-                ? "Bestellung wurde gesendet."
-                : "Bestellung wurde offline gespeichert und wird automatisch übertragen.");
+            setOrderStatus("Bestellung wurde offline gespeichert und wird automatisch übertragen.");
         } catch (err) {
             console.error("Failed to submit order:", err);
             setOrderStatus("Bestellung konnte nicht gespeichert werden.");
+        } finally {
+            setSubmitting(false);
+        }
+
+    }
+
+    async function completeCashPayment() {
+        const receivedAmount = Number(cashAmount.replace(",", "."));
+        const parsedStaffId = Number(staffId);
+        if (!Number.isFinite(receivedAmount) || receivedAmount < totalPrice) {
+            setOrderStatus("Der gegebene Betrag muss mindestens der Summe entsprechen.");
+            return;
+        }
+
+        const match = orderStatus?.match(/Bestellung (\d+)/);
+        if (!match) {
+            setOrderStatus("Bitte die Bestellung zuerst erfassen.");
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            const result = await payCash(Number(match[1]), receivedAmount, parsedStaffId);
+            setOrderLines([]);
+            setNextLineId(1);
+            setCashAmount("");
+            setOrderStatus(`Barzahlung abgeschlossen. Wechselgeld: ${result.changeAmount.toFixed(2)} €.`);
+            void loadMenuItems();
+        } catch (err) {
+            setOrderStatus(err instanceof Error ? err.message : "Barzahlung konnte nicht abgeschlossen werden.");
         } finally {
             setSubmitting(false);
         }
@@ -412,6 +447,29 @@ export default function Order() {
                                 >
                                     {submitting ? "Wird gesendet..." : "Bestellung senden"}
                                 </button>
+                                {orderStatus?.startsWith("Bestellung ") && (
+                                    <div className="mt-3 space-y-2 rounded border p-3">
+                                        <label className="block">
+                                            <span className="mb-1 block font-medium">Gegeben</span>
+                                            <input
+                                                type="number"
+                                                min={totalPrice}
+                                                step="0.01"
+                                                value={cashAmount}
+                                                onChange={event => setCashAmount(event.target.value)}
+                                                className="w-full rounded border p-2"
+                                            />
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={() => void completeCashPayment()}
+                                            disabled={submitting}
+                                            className="w-full bg-green-700 text-white"
+                                        >
+                                            Bar kassieren
+                                        </button>
+                                    </div>
+                                )}
                                 {orderStatus && <p className="mt-2" role="status">{orderStatus}</p>}
                                 {pendingOrderCount > 0 && (
                                     <p className="mt-2 text-amber-700" role="status">

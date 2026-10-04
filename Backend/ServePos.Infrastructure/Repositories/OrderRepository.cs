@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using ServePos.Application.Dtos.Order;
 using ServePos.Application.Repositoryies;
 using ServePos.Domain.Entities;
 
@@ -38,5 +39,51 @@ public class OrderRepository(PosDbContext db) : Repository(db), IOrderRepository
             Context.ChangeTracker.Clear();
             return false;
         }
+    }
+
+    public Task<Order?> GetByClientOrderIdAsync(Guid clientOrderId, CancellationToken cancellationToken) =>
+        Context.Orders.SingleOrDefaultAsync(x => x.ClientOrderId == clientOrderId, cancellationToken);
+
+    public async Task<CashPaymentResult> PayCashAsync(
+        int orderId,
+        decimal receivedAmount,
+        int staffId,
+        CancellationToken cancellationToken)
+    {
+        await using var transaction = await Context.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.Serializable,
+            cancellationToken);
+
+        var order = await Context.Orders
+            .Include(x => x.Items)
+            .ThenInclude(x => x.MenuItem)
+            .SingleOrDefaultAsync(x => x.Id == orderId, cancellationToken)
+            ?? throw new InvalidOperationException("The order does not exist.");
+
+        if (order.IsPaid)
+        {
+            throw new InvalidOperationException("The order has already been paid.");
+        }
+
+        var totalAmount = order.Items.Sum(x => x.MenuItem.Price);
+        var payment = new CashPayment(receivedAmount, totalAmount, staffId);
+
+        foreach (var item in order.Items)
+        {
+            item.SetUnitPrice(item.MenuItem.Price);
+            item.MenuItem.DecreaseAvailableQuantity();
+        }
+
+        order.MarkPaid(payment);
+        await Context.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
+        return new CashPaymentResult
+        {
+            OrderId = order.Id,
+            TotalAmount = payment.TotalAmount,
+            ReceivedAmount = payment.ReceivedAmount,
+            ChangeAmount = payment.ChangeAmount,
+        };
     }
 }

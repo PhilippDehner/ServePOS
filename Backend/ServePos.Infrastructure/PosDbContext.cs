@@ -9,6 +9,7 @@ namespace ServePos.Infrastructure
     {
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<CashPayment> CashPayments { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -41,6 +42,18 @@ namespace ServePos.Infrastructure
                 .HasOne(x => x.EnteredBy)
                 .WithMany()
                 .HasForeignKey(x => x.EnteredById);
+
+            modelBuilder.Entity<Order>()
+                .HasOne(x => x.CashPayment)
+                .WithOne(x => x.Order)
+                .HasForeignKey<CashPayment>(x => x.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CashPayment>()
+                .HasOne(x => x.ReceivedBy)
+                .WithMany()
+                .HasForeignKey(x => x.ReceivedById)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Order>()
                 .HasIndex(x => x.ClientOrderId)

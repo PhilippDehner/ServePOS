@@ -42,4 +42,20 @@ public class MenuItem : EntityId
     {
         SortIndex = index;
     }
+
+    public void DecreaseAvailableQuantity()
+    {
+        if (AvailableQuantity is null)
+        {
+            return;
+        }
+
+        if (AvailableQuantity <= 0)
+        {
+            throw new InvalidOperationException($"Menu item '{Name}' is out of stock.");
+        }
+
+        AvailableQuantity--;
+        UpdateTimestamp();
+    }
 }
