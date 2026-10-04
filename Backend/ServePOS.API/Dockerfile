@@ -13,6 +13,10 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["ServePOS.API/ServePOS.API.csproj", "ServePOS.API/"]
+COPY ["ServePos.Application/ServePos.Application.csproj", "ServePos.Application/"]
+COPY ["ServePos.Domain/ServePos.Domain.csproj", "ServePos.Domain/"]
+COPY ["ServePos.Infrastructure/ServePos.Infrastructure.csproj", "ServePos.Infrastructure/"]
+COPY ["Shared/ServePos.Shared.csproj", "Shared/"]
 RUN dotnet restore "./ServePOS.API/ServePOS.API.csproj"
 COPY . .
 WORKDIR "/src/ServePOS.API"
