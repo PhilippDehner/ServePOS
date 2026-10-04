@@ -61,6 +61,7 @@ builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<StaffService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<Bootstrapper>();
+builder.Services.AddScoped<ActiveEventGuard>();
 
 builder.Services.AddDbContext<PosDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), 
