@@ -2,6 +2,7 @@
   <Project Path="ServePOS.API/ServePOS.API.csproj" DisplayName="ServePos.API" />
   <Project Path="ServePos.Application/ServePos.Application.csproj" Id="00146bc4-e307-49b6-b686-4734aec780ce" />
   <Project Path="ServePos.Domain/ServePos.Domain.csproj" Id="b6a0fe77-267d-42fd-843c-8ca38f1319d1" />
+  <Project Path="ServePos.Domain.Tests/ServePos.Domain.Tests.csproj" />
   <Project Path="ServePos.Infrastructure/ServePos.Infrastructure.csproj" Id="1ec3c2f3-cda1-46e1-a162-df6b2f5e91f2" />
   <Project Path="Shared/ServePos.Shared.csproj" Id="59abcd60-50db-4c0e-952f-fc6fe2e94e1a" />
 </Solution>

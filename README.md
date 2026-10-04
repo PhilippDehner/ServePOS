@@ -147,3 +147,37 @@ Jwt__SigningKey=<at-least-32-random-characters>
 BootstrapAdmin__Username=admin
 BootstrapAdmin__Pin=<at-least-4-digits>
 ```
+
+## Lokaler Betrieb
+
+1. Lege im Repository eine `.env`-Datei an und setze mindestens
+   `Jwt__SigningKey` auf einen zufälligen Wert mit mindestens 32 Zeichen sowie
+   `BootstrapAdmin__Username` und `BootstrapAdmin__Pin`.
+2. Starte den vollständigen Stack:
+
+   ```bash
+   docker compose up --build
+   ```
+
+   Die Anwendung ist anschließend unter `http://localhost:5173` erreichbar;
+   die API läuft auf `http://localhost:8080`. Der erste konfigurierte
+   Administrator wird beim Start angelegt.
+3. Beende den Stack mit `docker compose down`. Mit `-v` werden zusätzlich die
+   lokalen Datenbankvolumes entfernt.
+
+## Lokale Entwicklung
+
+Starte PostgreSQL über `docker compose up database`, dann die API aus
+`Backend` mit `dotnet run --project ServePOS.API` und das Frontend aus
+`Frontend` mit `npm ci && npm run dev`.
+
+Für Vertragsänderungen muss die API laufen, bevor der Client aktualisiert wird:
+
+```bash
+cd Frontend
+npm run update-api-client
+```
+
+Die App kann in aktuellen Browsern über das Installationssymbol als PWA
+installiert werden. Offline erfasste Bestellungen werden lokal zwischengespeichert
+und beim nächsten Online-Ereignis synchronisiert.
