@@ -1,6 +1,6 @@
 ﻿import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { getAccessToken } from "../auth";
+import { isAuthenticated } from "../auth";
 
 type Props = {
     children: ReactNode;
@@ -9,7 +9,7 @@ type Props = {
 export default function RequireAuthentication({ children }: Props) {
     const location = useLocation();
 
-    if (!getAccessToken()) {
+    if (!isAuthenticated()) {
         return <Navigate to="/login" replace state={{ from: location }} />;
     }
 
