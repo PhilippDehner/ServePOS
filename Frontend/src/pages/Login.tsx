@@ -1,12 +1,13 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ButtonGroup from "../components/ButtonGroup";
 import HomeButton from "../components/HomeButton";
 import { setAccessToken } from "../auth";
 
 export default function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [username, setUsername] = useState("");
     const [pin, setPin] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -30,7 +31,8 @@ export default function Login() {
 
             const { accessToken } = await response.json() as { accessToken: string };
             setAccessToken(accessToken);
-            navigate("/admin");
+            const from = location.state?.from?.pathname;
+            navigate(from ?? "/admin", { replace: true });
         } catch (err) {
             console.error("Failed to log in:", err);
             setError("Die Anmeldung konnte nicht durchgeführt werden.");
