@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { clearAccessToken, isAuthenticated } from "../auth";
+import { isAuthenticated, logout as logoutAccessToken } from "../auth";
 
 export default function Home() {
   const navigate = useNavigate();
   const [authenticated, setAuthenticated] = useState(isAuthenticated);
 
-  function logout() {
-    clearAccessToken();
+  async function logout() {
+    await logoutAccessToken();
     setAuthenticated(false);
   }
 

@@ -28,6 +28,7 @@ services:
       Jwt__ExpirationMinutes: ${Jwt__ExpirationMinutes:-60}
       BootstrapAdmin__Username: ${BootstrapAdmin__Username:?Set BootstrapAdmin__Username in .env}
       BootstrapAdmin__Pin: ${BootstrapAdmin__Pin:?Set BootstrapAdmin__Pin in .env}
+      SeedData__Enabled: ${SeedData__Enabled:-false}
       ConnectionStrings__DefaultConnection: Host=database;Port=5432;Database=posdb;Username=pos;Password=pos
     depends_on:
       database:

@@ -1,4 +1,5 @@
 const accessTokenKey = "servepos.access-token";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "/api";
 
 export function getAccessToken(): string | null {
     return localStorage.getItem(accessTokenKey);
@@ -42,4 +43,35 @@ export function clearAccessToken(): void {
 export function getAuthorizationHeaders(): Record<string, string> {
     const accessToken = getAccessToken();
     return accessToken && isAuthenticated() ? { Authorization: `Bearer ${accessToken}` } : {};
+}
+
+export function authorizedFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+    const headers = new Headers(init?.headers);
+    for (const [name, value] of Object.entries(getAuthorizationHeaders())) {
+        headers.set(name, value);
+    }
+
+    return fetch(input, {
+        ...init,
+        headers,
+    }).then(response => {
+        if (response.status === 401) {
+            clearAccessToken();
+            const from = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+            window.location.assign(`/login?from=${encodeURIComponent(from)}`);
+        }
+
+        return response;
+    });
+}
+
+export async function logout(): Promise<void> {
+    try {
+        await fetch(`${apiBaseUrl}/auth/logout`, {
+            method: "POST",
+            headers: getAuthorizationHeaders(),
+        });
+    } finally {
+        clearAccessToken();
+    }
 }

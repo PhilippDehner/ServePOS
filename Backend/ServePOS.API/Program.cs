@@ -50,8 +50,32 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var tokenId = context.Principal?.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti)?.Value
+                    ?? context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.SerialNumber)?.Value;
+                if (tokenId is null)
+                {
+                    context.Fail("The access token does not contain an identifier.");
+                    return;
+                }
+
+                var db = context.HttpContext.RequestServices.GetRequiredService<PosDbContext>();
+                if (await db.RevokedAccessTokens.AnyAsync(x => x.TokenId == tokenId, context.HttpContext.RequestAborted))
+                {
+                    context.Fail("The access token has been revoked.");
+                }
+            }
+        };
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
 
 builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
@@ -62,6 +86,7 @@ builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<StaffService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<Bootstrapper>();
+builder.Services.AddScoped<DevelopmentDataSeeder>();
 builder.Services.AddScoped<ActiveEventGuard>();
 builder.Services.AddScoped<ITicketPrinter, LoggingTicketPrinter>();
 
@@ -77,6 +102,12 @@ using (var scope = app.Services.CreateScope())
     await database.Database.MigrateAsync();
     var bootstrapper = scope.ServiceProvider.GetRequiredService<Bootstrapper>();
     await bootstrapper.Initialize(CancellationToken.None);
+
+    if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("SeedData:Enabled"))
+    {
+        var seeder = scope.ServiceProvider.GetRequiredService<DevelopmentDataSeeder>();
+        await seeder.SeedAsync(CancellationToken.None);
+    }
 }
 
 if (app.Environment.IsDevelopment())

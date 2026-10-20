@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using ServePos.Domain.Entities;
 using ServePos.Infrastructure;
 
 namespace ServePOS.API.Auth;
@@ -27,6 +28,7 @@ public class AuthService(PosDbContext db, IOptions<JwtOptions> jwtOptions)
         var expiresAt = DateTime.UtcNow.AddMinutes(options.ExpirationMinutes);
         var claims = new[]
         {
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.Role, user.Role.Name)
@@ -46,5 +48,18 @@ public class AuthService(PosDbContext db, IOptions<JwtOptions> jwtOptions)
             AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
             ExpiresAt = expiresAt
         };
+    }
+
+    public async Task Logout(string tokenId, DateTime expiresAt, CancellationToken cancellationToken)
+    {
+        await db.RevokedAccessTokens
+            .Where(x => x.ExpiresAt <= DateTime.UtcNow)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if (!await db.RevokedAccessTokens.AnyAsync(x => x.TokenId == tokenId, cancellationToken))
+        {
+            db.RevokedAccessTokens.Add(new RevokedAccessToken(tokenId, expiresAt));
+            await db.SaveChangesAsync(cancellationToken);
+        }
     }
 }

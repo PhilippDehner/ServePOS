@@ -341,6 +341,19 @@ namespace ServePos.Infrastructure.Migrations
                     b.ToTable("OrderItem");
                 });
 
+            modelBuilder.Entity("ServePos.Domain.Entities.RevokedAccessToken", b =>
+                {
+                    b.Property<string>("TokenId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("TokenId");
+
+                    b.ToTable("RevokedAccessTokens");
+                });
+
             modelBuilder.Entity("ServePos.Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")

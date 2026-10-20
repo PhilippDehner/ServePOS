@@ -6,11 +6,11 @@ import type { StaffInfo } from "../api";
 import { MdOutlineAddCircleOutline } from "react-icons/md";
 import { MdOutlineModeEditOutline, MdSaveAlt } from "react-icons/md";
 import { TbPencilCancel } from "react-icons/tb";
-import { getAuthorizationHeaders } from "../auth";
+import { authorizedFetch } from "../auth";
 
 const config = new Configuration({
     basePath: import.meta.env.VITE_API_BASE_URL || "/api",
-    headers: getAuthorizationHeaders(),
+    fetchApi: authorizedFetch,
 });
 const api = new StaffApi(config);
 

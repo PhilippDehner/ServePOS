@@ -154,7 +154,9 @@ BootstrapAdmin__Pin=<at-least-4-digits>
    `Jwt__SigningKey` auf einen zufälligen Wert mit mindestens 32 Zeichen sowie
    `BootstrapAdmin__Username` und `BootstrapAdmin__Pin`. Docker Compose leitet
    diese Werte als Konfiguration an die API weiter. `Jwt__Issuer` und
-   `Jwt__Audience` sind optional und verwenden standardmäßig `ServePOS`.
+   `Jwt__Audience` sind optional und verwenden standardmäßig `ServePOS`. Setze
+   zusätzlich `SeedData__Enabled=true`, um in Docker beim ersten Erstellen einer
+   leeren Datenbank Beispieldaten anzulegen.
 2. Starte den vollständigen Stack:
 
    ```bash
@@ -174,6 +176,15 @@ BootstrapAdmin__Pin=<at-least-4-digits>
 Starte PostgreSQL über `docker compose up database`, dann die API aus
 `Backend` mit `dotnet run --project ServePOS.API` und das Frontend aus
 `Frontend` mit `npm ci && npm run dev`.
+
+Im Entwicklungsmodus legt die API nach den Migrationen einmalig Beispieldaten
+an: eine aktive Testveranstaltung, acht Tische, die Ausgabestellen Küche und
+Getränke sowie typische Speisen und Getränke. Zusätzlich werden zwei
+Bedienungen und Login-Konten angelegt: `bedienung1`, `bedienung2`, `kueche`
+und `getraenke`, jeweils mit PIN `1234`. Der Seeder ist idempotent und
+überschreibt keine vorhandene Veranstaltung. Außerhalb des Entwicklungsmodus
+kann er mit `SeedData__Enabled=true` aktiviert werden, beispielsweise in der
+`.env`-Datei für Docker Compose.
 
 Für Vertragsänderungen muss die API laufen, bevor der Client aktualisiert wird:
 

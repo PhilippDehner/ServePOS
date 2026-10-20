@@ -18,6 +18,7 @@ namespace ServePos.Infrastructure
         public DbSet<Event> Events { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<RevokedAccessToken> RevokedAccessTokens { get; set; }
         public DbSet<Table> Tables { get; set; }
         public DbSet<ServingStation> ServingStations { get; set; }
         public DbSet<Domain.Entities.MenuItemType> MenuItemTypes { get; set; }
@@ -124,6 +125,9 @@ namespace ServePos.Infrastructure
                 .WithMany()
                 .HasForeignKey(x => x.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RevokedAccessToken>()
+                .HasKey(x => x.TokenId);
 
             modelBuilder.Entity<Table>()
                 .HasIndex(x => new { x.EventId, x.Name })

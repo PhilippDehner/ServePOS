@@ -31,8 +31,9 @@ export default function Login() {
 
             const { accessToken } = await response.json() as { accessToken: string };
             setAccessToken(accessToken);
-            const from = location.state?.from?.pathname;
-            navigate(from ?? "/admin", { replace: true });
+            const from = location.state?.from?.pathname
+                ?? new URLSearchParams(location.search).get("from");
+            navigate(from?.startsWith("/") && !from.startsWith("//") ? from : "/", { replace: true });
         } catch (err) {
             console.error("Failed to log in:", err);
             setError("Die Anmeldung konnte nicht durchgeführt werden.");

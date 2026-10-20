@@ -5,6 +5,7 @@ import MenuAdministration from "../components/MenuAdministration";
 import RefreshButton from "../components/RefreshButton";
 import StaffAdministration from "../components/StaffAdministration";
 import ButtonGroup from "../components/ButtonGroup";
+import EventAdministration from "../components/EventAdministration";
 
 export default function Admin() {
     const menuRefreshRef = useRef<(() => Promise<void>) | null>(null);
@@ -70,6 +71,7 @@ export default function Admin() {
             />
 
             <StaffAdministration onRegisterRefresh={handleRegisterStaffRefresh} />
+            <EventAdministration />
         </div>
     );
 }

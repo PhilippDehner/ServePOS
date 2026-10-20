@@ -1,3 +1,5 @@
+import { getAuthorizationHeaders } from "./auth";
+
 export type PendingOrder = {
     clientOrderId: string;
     staffId: number;
@@ -64,7 +66,7 @@ export async function queueOrder(order: PendingOrder): Promise<void> {
 async function sendOrder(order: PendingOrder): Promise<OrderReceipt> {
     const response = await fetch(`${apiBaseUrl}/serve/order`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthorizationHeaders() },
         body: JSON.stringify(order),
     });
 
@@ -96,7 +98,7 @@ export async function payCash(orderId: number, receivedAmount: number, staffId: 
 }> {
     const response = await fetch(`${apiBaseUrl}/serve/order/${orderId}/cash-payment`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthorizationHeaders() },
         body: JSON.stringify({ receivedAmount, staffId }),
     });
 

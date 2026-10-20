@@ -6,11 +6,11 @@ import { MenuItemInsertInformationTypeEnum } from "../api";
 import type { MenuItem } from "../api";
 import AdminMenuRow, { type RowSavePayload } from "./AdminMenuRow";
 import { MdOutlineAddCircleOutline } from "react-icons/md";
-import { getAuthorizationHeaders } from "../auth";
+import { authorizedFetch } from "../auth";
 
 const config = new Configuration({
 	basePath: import.meta.env.VITE_API_BASE_URL || "/api",
-	headers: getAuthorizationHeaders(),
+	fetchApi: authorizedFetch,
 });
 const api = new MenuApi(config);
 

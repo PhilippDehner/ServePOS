@@ -13,7 +13,7 @@ import { BiSolidDrink } from "react-icons/bi";
 import { BsForkKnife } from "react-icons/bs";
 import { LiaCommentDotsSolid } from "react-icons/lia";
 import { CgCoffee } from "react-icons/cg";
-import { getAuthorizationHeaders } from "../auth";
+import { authorizedFetch } from "../auth";
 import {
     createClientOrderId,
     getPendingOrderCount,
@@ -24,7 +24,7 @@ import {
 
 const config = new Configuration({
     basePath: import.meta.env.VITE_API_BASE_URL || "/api",
-    headers: getAuthorizationHeaders(),
+    fetchApi: authorizedFetch,
 });
 const api = new MenuApi(config);
 const staffApi = new StaffApi(config);
